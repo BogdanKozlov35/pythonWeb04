@@ -6,15 +6,16 @@ import socket
 from pathlib import Path
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from threading import Thread
+from datetime import datetime
 
 from jinja2 import Environment, FileSystemLoader
 
 BASE_DIR = Path()
 BUFFER_SIZE = 1024
-HTTP_PORT = 8080
+HTTP_PORT = 3000
 HTTP_HOST = '0.0.0.0'
 SOCKET_HOST = '127.0.0.1'
-SOCKET_PORT = 4000
+SOCKET_PORT = 5000
 
 jinja = Environment(loader=FileSystemLoader('templates'))
 
@@ -36,7 +37,7 @@ class GoitFramework(BaseHTTPRequestHandler):
                 if file.exists():
                     self.send_static(file)
                 else:
-                    self.send_html('404.html', 404)
+                    self.send_html('error.html', 404)
 
     def do_POST(self):
         size = self.headers.get('Content-Length')
@@ -84,8 +85,11 @@ class GoitFramework(BaseHTTPRequestHandler):
 
 def save_data_from_form(data):
     parse_data = urllib.parse.unquote_plus(data.decode())
+
     try:
-        parse_dict = {key: value for key, value in [el.split('=') for el in parse_data.split('&')]}
+        now = datetime.now()
+        formated_time = now.strftime("%Y-%m-%d %H:%M:%S.%f")
+        parse_dict = {formated_time: {key: value for key, value in [el.split('=') for el in parse_data.split('&')]}}
         with open('data/data.json', 'w', encoding='utf-8') as file:
             json.dump(parse_dict, file, ensure_ascii=False, indent=4)
     except ValueError as err:

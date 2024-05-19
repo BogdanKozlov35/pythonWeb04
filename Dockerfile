@@ -1,7 +1,7 @@
 
 # Docker-команда FROM вказує базовий образ контейнера
 # Наш базовий образ - це Linux з попередньо встановленим python
-FROM python:3.10-slim
+FROM python:3.11-slim
 
 # Встановимо змінну середовища
 ENV APP_HOME /app
@@ -20,7 +20,7 @@ RUN poetry config virtualenvs.create false && poetry install --only main
 COPY . .
 
 # Позначимо порт, де працює застосунок всередині контейнера
-EXPOSE 8080
+EXPOSE 3000
 
 # Запустимо наш застосунок всередині контейнера
 CMD ["python", "main.py"]
